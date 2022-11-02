@@ -55,18 +55,34 @@ fun Compose() {
                 onValueChange = { textState = it },
                 shape = RoundedCornerShape(15)
             )
-            Button(
-                onClick = {
-                    val numbers = textState.split(" ").map { it.toInt() }
-                    val sortedNumbers = MergeSort().sort(numbers)
-                    sortedTextState = sortedNumbers.joinToString(" ")
-                },
-                modifier = Modifier
-                    .padding(16.dp)
-                    .width(65.dp)
-                    .wrapContentWidth(align = Alignment.CenterHorizontally)
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Text(text = "Sort")
+                Button(
+                    onClick = {
+                        val numbers = textState.split(" ").map { it.toInt() }
+                        val sortedNumbers = MergeSort().sort(numbers)
+                        sortedTextState = sortedNumbers.joinToString(" ")
+                    },
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .width(65.dp)
+                        .wrapContentWidth(align = Alignment.CenterHorizontally)
+                ) {
+                    Text(text = "Sort")
+                }
+                Button(
+                    onClick = {
+                        textState = ""
+                        sortedTextState = ""
+                    },
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .width(85.dp)
+                        .wrapContentWidth(align = Alignment.CenterHorizontally)
+                ) {
+                    Text(text = "Clear")
+                }
             }
             OutlinedTextField(
                 value = sortedTextState,
