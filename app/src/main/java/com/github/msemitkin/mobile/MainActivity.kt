@@ -39,6 +39,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Compose() {
+    var isError by remember { mutableStateOf(false) }
     var textState by remember { mutableStateOf("") }
     var sortedTextState by remember { mutableStateOf("") }
     var chosenSortingStrategyName by remember { mutableStateOf("Merge Sort") }
@@ -65,7 +66,12 @@ fun Compose() {
                 value = textState,
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 onValueChange = { textState = it },
-                shape = RoundedCornerShape(15)
+                shape = RoundedCornerShape(15),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    errorBorderColor = MaterialTheme.colors.error,
+                    unfocusedBorderColor = MaterialTheme.colors.primary
+                ),
+                isError = isError
             )
             Column(horizontalAlignment = Alignment.Start) {
                 strategies.forEach { (strategyName, _) ->
@@ -85,8 +91,16 @@ fun Compose() {
             Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                 Button(
                     onClick = {
-                        val numbers = parseNumbers(textState)
-                        val sortedNumbers = strategies[chosenSortingStrategyName]!!.sort(numbers)
+                        val numbers: List<Number>
+                        try {
+                            numbers = parseNumbers(textState)
+                            isError = false
+                        } catch (e: Exception) {
+                            isError = true
+                            return@Button
+                        }
+                        val sortedNumbers =
+                            strategies[chosenSortingStrategyName]!!.sort(numbers)
                         sortedTextState = sortedNumbers.joinToString(SEPARATOR)
                     },
                     modifier = Modifier
@@ -100,6 +114,7 @@ fun Compose() {
                     onClick = {
                         textState = ""
                         sortedTextState = ""
+                        isError = false
                     },
                     modifier = Modifier
                         .padding(16.dp)
