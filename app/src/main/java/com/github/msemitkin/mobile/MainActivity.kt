@@ -14,8 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.github.msemitkin.mobile.sorting.MergeSort
+import androidx.compose.ui.unit.sp
+import com.github.msemitkin.mobile.sorting.*
 import com.github.msemitkin.mobile.ui.theme.AndroidArraySorterTheme
+
+private const val SEPARATOR = " "
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +41,15 @@ class MainActivity : ComponentActivity() {
 fun Compose() {
     var textState by remember { mutableStateOf("") }
     var sortedTextState by remember { mutableStateOf("") }
+    var chosenSortingStrategyName by remember { mutableStateOf("Merge Sort") }
+    val strategies = mapOf(
+        "Merge Sort" to MergeSort(),
+        "Bubble Sort" to BubbleSort(),
+        "Insertion Sort" to InsertionSort(),
+        "Quick Sort" to QuickSort(),
+        "Selection Sort" to SelectionSort()
+    )
+
     Box(
         modifier = Modifier
             .wrapContentHeight(align = Alignment.Top)
@@ -55,14 +67,27 @@ fun Compose() {
                 onValueChange = { textState = it },
                 shape = RoundedCornerShape(15)
             )
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
+            Column(horizontalAlignment = Alignment.Start) {
+                strategies.forEach { (strategyName, _) ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = strategyName == chosenSortingStrategyName,
+                            onClick = { chosenSortingStrategyName = strategyName }
+                        )
+                        Text(
+                            text = strategyName,
+                            modifier = Modifier.padding(start = 8.dp),
+                            fontSize = 10.sp
+                        )
+                    }
+                }
+            }
+            Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                 Button(
                     onClick = {
-                        val numbers = textState.split(" ").map { it.toInt() }
-                        val sortedNumbers = MergeSort().sort(numbers)
-                        sortedTextState = sortedNumbers.joinToString(" ")
+                        val numbers = parseNumbers(textState)
+                        val sortedNumbers = strategies[chosenSortingStrategyName]!!.sort(numbers)
+                        sortedTextState = sortedNumbers.joinToString(SEPARATOR)
                     },
                     modifier = Modifier
                         .padding(16.dp)
@@ -93,6 +118,12 @@ fun Compose() {
         }
     }
 }
+
+private fun parseNumbers(textState: String): List<Number> =
+    textState.trim()
+        .split(SEPARATOR)
+        .filter(String::isNotBlank)
+        .map { it.toInt() }
 
 
 @Preview(showBackground = true)
