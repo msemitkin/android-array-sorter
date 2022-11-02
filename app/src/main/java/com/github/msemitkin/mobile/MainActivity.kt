@@ -4,20 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.github.msemitkin.mobile.sorting.MergeSort
 import com.github.msemitkin.mobile.ui.theme.AndroidArraySorterTheme
 
 class MainActivity : ComponentActivity() {
@@ -26,8 +23,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             AndroidArraySorterTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = MaterialTheme.colors.background)
                 ) {
                     Compose()
                 }
@@ -39,16 +37,45 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Compose() {
     var textState by remember { mutableStateOf("") }
-
-    TextField(
-        value = textState,
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-        onValueChange = { textState = it },
+    var sortedTextState by remember { mutableStateOf("") }
+    Box(
         modifier = Modifier
-            .background(color = Color.LightGray)
-            .height(20.dp)
-            .fillMaxWidth()
-    )
+            .wrapContentHeight(align = Alignment.Top)
+            .wrapContentWidth(align = Alignment.CenterHorizontally)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
+            OutlinedTextField(
+                value = textState,
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                onValueChange = { textState = it },
+                shape = RoundedCornerShape(15)
+            )
+            Button(
+                onClick = {
+                    val numbers = textState.split(" ").map { it.toInt() }
+                    val sortedNumbers = MergeSort().sort(numbers)
+                    sortedTextState = sortedNumbers.joinToString(" ")
+                },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .width(65.dp)
+                    .wrapContentWidth(align = Alignment.CenterHorizontally)
+            ) {
+                Text(text = "Sort")
+            }
+            OutlinedTextField(
+                value = sortedTextState,
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                onValueChange = { sortedTextState = it },
+                shape = RoundedCornerShape(15)
+            )
+        }
+    }
 }
 
 
