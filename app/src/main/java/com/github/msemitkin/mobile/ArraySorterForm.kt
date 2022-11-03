@@ -109,7 +109,12 @@ fun ArraySorterForm() {
                 value = sortedTextState,
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 onValueChange = { sortedTextState = it },
-                shape = RoundedCornerShape(15)
+                shape = RoundedCornerShape(15),
+                readOnly = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    unfocusedBorderColor = MaterialTheme.colors.primary,
+                    focusedBorderColor = MaterialTheme.colors.primary
+                )
             )
         }
     }
