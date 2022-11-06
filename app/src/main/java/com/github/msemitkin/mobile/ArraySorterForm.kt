@@ -23,6 +23,7 @@ fun ArraySorterForm() {
     var isError by remember { mutableStateOf(false) }
     var textState by remember { mutableStateOf("") }
     var sortedTextState by remember { mutableStateOf("") }
+    var numberOfIterationsState by remember { mutableStateOf("") }
     var chosenSortingStrategyName by remember { mutableStateOf(defaultSortingStrategy) }
     val strategies: Map<String, SortingStrategy> = mapOf(
         "Merge Sort" to MergeSort(),
@@ -80,9 +81,10 @@ fun ArraySorterForm() {
                             isError = true
                             return@Button
                         }
-                        val sortedNumbers: SortingResult<Int> =
+                        val sortingResult: SortingResult<Int> =
                             strategies[chosenSortingStrategyName]!!.sort(numbers)
-                        sortedTextState = sortedNumbers.sortedValues.joinToString(numberSeparator)
+                        sortedTextState = sortingResult.sortedValues.joinToString(numberSeparator)
+                        numberOfIterationsState = sortingResult.numberOfIterations.toString()
                     },
                     modifier = Modifier
                         .padding(16.dp)
@@ -95,6 +97,7 @@ fun ArraySorterForm() {
                     onClick = {
                         textState = ""
                         sortedTextState = ""
+                        numberOfIterationsState = ""
                         isError = false
                     },
                     modifier = Modifier
@@ -115,6 +118,18 @@ fun ArraySorterForm() {
                     unfocusedBorderColor = MaterialTheme.colors.primary,
                     focusedBorderColor = MaterialTheme.colors.primary
                 )
+            )
+            OutlinedTextField(
+                value = numberOfIterationsState,
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                onValueChange = { numberOfIterationsState = it },
+                shape = RoundedCornerShape(15),
+                readOnly = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    unfocusedBorderColor = MaterialTheme.colors.primary,
+                    focusedBorderColor = MaterialTheme.colors.primary
+                ),
+                label = { Text(text = "Number of iterations") }
             )
         }
     }
