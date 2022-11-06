@@ -17,7 +17,7 @@ import com.github.msemitkin.mobile.ui.theme.AndroidArraySorterTheme
 
 @Composable
 fun ArraySorterForm(
-    onChartButtonClicked: (List<Int>) -> Unit
+    onChartButtonClicked: (List<Int>) -> Unit,
 ) {
     val defaultSortingStrategy = stringResource(R.string.default_sorting_strategy)
     val numberSeparator = stringResource(R.string.number_separator)
@@ -101,59 +101,42 @@ fun ArraySorterForm(
                 }
             }
             Row {
-                Button(
-                    onClick = onSort,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .width(85.dp)
-                        .wrapContentWidth(align = Alignment.CenterHorizontally)
-                ) {
-                    Text(text = "Sort")
-                }
-                Button(
-                    onClick = onClear,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .width(85.dp)
-                        .wrapContentWidth(align = Alignment.CenterHorizontally)
-                ) {
-                    Text(text = "Clear")
-                }
-                Button(
-                    onClick = onChart,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .width(85.dp)
-                        .wrapContentWidth(align = Alignment.CenterHorizontally)
-                ) {
-                    Text(text = "Chart")
-                }
+                MenuButton(onClick = onSort, text = "Sort")
+                MenuButton(onClick = onClear, text = "Clear")
+                MenuButton(onClick = onChart, text = "Chart")
             }
-            OutlinedTextField(
-                value = sortedTextState,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                onValueChange = { sortedTextState = it },
-                shape = RoundedCornerShape(15),
-                readOnly = true,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    unfocusedBorderColor = MaterialTheme.colors.primary,
-                    focusedBorderColor = MaterialTheme.colors.primary
-                )
-            )
-            OutlinedTextField(
-                value = numberOfIterationsState,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                onValueChange = { numberOfIterationsState = it },
-                shape = RoundedCornerShape(15),
-                readOnly = true,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    unfocusedBorderColor = MaterialTheme.colors.primary,
-                    focusedBorderColor = MaterialTheme.colors.primary
-                ),
-                label = { Text(text = "Number of iterations") }
-            )
+            ReadOnlyField(value = sortedTextState)
+            ReadOnlyField(value = numberOfIterationsState, label = "Number of iterations")
         }
     }
+}
+
+@Composable
+private fun MenuButton(onClick: () -> Unit, text: String) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .padding(16.dp)
+            .width(85.dp)
+            .wrapContentWidth(align = Alignment.CenterHorizontally)
+    ) {
+        Text(text = text)
+    }
+}
+
+@Composable
+private fun ReadOnlyField(value: String, label: String? = null) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = { },
+        shape = RoundedCornerShape(15),
+        readOnly = true,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            unfocusedBorderColor = MaterialTheme.colors.primary,
+            focusedBorderColor = MaterialTheme.colors.primary
+        ),
+        label = { Text(text = label ?: "") }
+    )
 }
 
 @Preview(showBackground = true)
