@@ -39,8 +39,6 @@ fun ChartComposable(uiState: NumbersUiState) {
             xAxisDrawer = SimpleXAxisDrawer(),
             yAxisDrawer = SimpleYAxisDrawer(
                 labelValueFormatter = { it.toInt().toString() }
-                //                axisLineColor = Color.Transparent,
-//                labelTextColor = Color.Transparent
             ),
             labelDrawer = SimpleLabelDrawer()
         )

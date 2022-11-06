@@ -1,7 +1,6 @@
 package com.github.msemitkin.mobile
 
 import androidx.lifecycle.ViewModel
-import com.github.msemitkin.mobile.sorting.SortingResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,11 +22,11 @@ class NumbersViewModel : ViewModel() {
         }
     }
 
-    fun setSortingResult(sortingResult: SortingResult<Int>) {
+    fun setSortingResult(sortedNumbersState: String, sortingIterationsCountState: String) {
         _uiState.update { currentState ->
             currentState.copy(
-                sortedNumbersState = sortingResult.sortedValues.joinToString(" "),
-                sortingIterationsCountState = sortingResult.numberOfIterations.toString()
+                sortedNumbersState = sortedNumbersState,
+                sortingIterationsCountState = sortingIterationsCountState
             )
         }
     }
