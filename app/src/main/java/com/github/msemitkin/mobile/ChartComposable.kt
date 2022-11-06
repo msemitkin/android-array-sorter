@@ -15,8 +15,10 @@ import me.bytebeats.views.charts.bar.render.yaxis.SimpleYAxisDrawer
 import me.bytebeats.views.charts.simpleChartAnimation
 
 @Composable
-fun ChartComposable(numbers: List<Int>) {
-    val histogramData = numbers.groupBy { it }.mapValues { (_, numbers) -> numbers.size }
+fun ChartComposable(uiState: NumbersUiState) {
+    val histogramData = uiState.numbers
+        .groupBy { it }
+        .mapValues { (_, numbers) -> numbers.size }
     val bars = histogramData
         .map { (number, count) -> BarChartData.Bar(count.toFloat(), Color.LightGray, "$number") }
         .ifEmpty { (1..5).map { BarChartData.Bar(0.0f, Color.LightGray, "$it") } }

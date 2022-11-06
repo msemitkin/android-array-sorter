@@ -7,25 +7,57 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.github.msemitkin.mobile.sorting.*
 
 @Composable
 fun ArraySorterNavigation(
     navController: NavHostController = rememberNavController(),
-    viewModel: NumbersViewModel = NumbersViewModel()
+    viewModel: NumbersViewModel = NumbersViewModel(),
 ) {
     val uiState: NumbersUiState by viewModel.uiState.collectAsState()
+
+    val strategies: Map<String, SortingStrategy> = mapOf(
+        "Merge Sort" to MergeSort(),
+        "Bubble Sort" to BubbleSort(),
+        "Insertion Sort" to InsertionSort(),
+        "Quick Sort" to QuickSort(),
+        "Selection Sort" to SelectionSort()
+    )
 
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
             ArraySorterForm(
-                onChartButtonClicked = {
-                    viewModel.setNumbers(it)
-                    navController.navigate("chart")
-                }
+                onSort = {
+                    try {
+                        val parsedNumbers = parseNumbers(uiState.inputString, " ")
+                        val sortingResult = strategies[uiState.chosenStrategyName]!!
+                            .sort(parsedNumbers)
+                        viewModel.setNumbers(parsedNumbers)
+                        viewModel.setInvalidInput(false)
+                        viewModel.setSortingResult(sortingResult)
+                    } catch (e: Exception) {
+                        viewModel.setInvalidInput(true)
+                    }
+                },
+                onChart = {
+                    try {
+                        val numbers = parseNumbers(uiState.inputString, " ")
+                        viewModel.setNumbers(numbers)
+                        viewModel.setInvalidInput(false)
+                        navController.navigate("chart")
+                    } catch (e: Exception) {
+                        viewModel.setInvalidInput(true)
+                    }
+                },
+                onInputUpdate = { viewModel.setInputString(it) },
+                onClear = { viewModel.reset() },
+                onStrategyChange = { strategy -> viewModel.setChosenStrategyName(strategy) },
+                strategies = strategies,
+                uiState = uiState
             )
         }
         composable("chart") {
-            ChartComposable(uiState.numbers)
+            ChartComposable(uiState)
         }
     }
 }
