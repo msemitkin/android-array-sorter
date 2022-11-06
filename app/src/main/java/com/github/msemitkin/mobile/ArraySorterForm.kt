@@ -33,6 +33,26 @@ fun ArraySorterForm() {
         "Selection Sort" to SelectionSort()
     )
 
+    val onSort = {
+        val numbers: List<Int>
+        try {
+            numbers = parseNumbers(textState, numberSeparator)
+            isError = false
+            val sortingResult: SortingResult<Int> =
+                strategies[chosenSortingStrategyName]!!.sort(numbers)
+            sortedTextState = sortingResult.sortedValues.joinToString(numberSeparator)
+            numberOfIterationsState = sortingResult.numberOfIterations.toString()
+        } catch (e: Exception) {
+            isError = true
+        }
+    }
+    val onClear = {
+        textState = ""
+        sortedTextState = ""
+        numberOfIterationsState = ""
+        isError = false
+    }
+
     Box(
         modifier = Modifier
             .wrapContentHeight(align = Alignment.Top)
@@ -72,20 +92,7 @@ fun ArraySorterForm() {
             }
             Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                 Button(
-                    onClick = {
-                        val numbers: List<Int>
-                        try {
-                            numbers = parseNumbers(textState, numberSeparator)
-                            isError = false
-                        } catch (e: Exception) {
-                            isError = true
-                            return@Button
-                        }
-                        val sortingResult: SortingResult<Int> =
-                            strategies[chosenSortingStrategyName]!!.sort(numbers)
-                        sortedTextState = sortingResult.sortedValues.joinToString(numberSeparator)
-                        numberOfIterationsState = sortingResult.numberOfIterations.toString()
-                    },
+                    onClick = onSort,
                     modifier = Modifier
                         .padding(16.dp)
                         .width(65.dp)
@@ -94,12 +101,7 @@ fun ArraySorterForm() {
                     Text(text = "Sort")
                 }
                 Button(
-                    onClick = {
-                        textState = ""
-                        sortedTextState = ""
-                        numberOfIterationsState = ""
-                        isError = false
-                    },
+                    onClick = onClear,
                     modifier = Modifier
                         .padding(16.dp)
                         .width(85.dp)
