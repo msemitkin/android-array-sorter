@@ -16,15 +16,11 @@ import com.github.msemitkin.mobile.sorting.*
 import com.github.msemitkin.mobile.ui.theme.AndroidArraySorterTheme
 
 @Composable
-fun ArraySorterForm() {
+fun ArraySorterForm(
+    onChartButtonClicked: (List<Int>) -> Unit
+) {
     val defaultSortingStrategy = stringResource(R.string.default_sorting_strategy)
     val numberSeparator = stringResource(R.string.number_separator)
-
-    var isError by remember { mutableStateOf(false) }
-    var textState by remember { mutableStateOf("") }
-    var sortedTextState by remember { mutableStateOf("") }
-    var numberOfIterationsState by remember { mutableStateOf("") }
-    var chosenSortingStrategyName by remember { mutableStateOf(defaultSortingStrategy) }
     val strategies: Map<String, SortingStrategy> = mapOf(
         "Merge Sort" to MergeSort(),
         "Bubble Sort" to BubbleSort(),
@@ -33,13 +29,19 @@ fun ArraySorterForm() {
         "Selection Sort" to SelectionSort()
     )
 
+    var isError by remember { mutableStateOf(false) }
+    var textState by remember { mutableStateOf("") }
+    var sortedTextState by remember { mutableStateOf("") }
+    var numberOfIterationsState by remember { mutableStateOf("") }
+    var chosenSortingStrategyName by remember { mutableStateOf(defaultSortingStrategy) }
+    var inputNumbers by remember { mutableStateOf(listOf<Int>()) }
+
     val onSort = {
-        val numbers: List<Int>
         try {
-            numbers = parseNumbers(textState, numberSeparator)
+            inputNumbers = parseNumbers(textState, numberSeparator)
             isError = false
             val sortingResult: SortingResult<Int> =
-                strategies[chosenSortingStrategyName]!!.sort(numbers)
+                strategies[chosenSortingStrategyName]!!.sort(inputNumbers)
             sortedTextState = sortingResult.sortedValues.joinToString(numberSeparator)
             numberOfIterationsState = sortingResult.numberOfIterations.toString()
         } catch (e: Exception) {
@@ -47,16 +49,24 @@ fun ArraySorterForm() {
         }
     }
     val onClear = {
+        inputNumbers = emptyList()
         textState = ""
         sortedTextState = ""
         numberOfIterationsState = ""
         isError = false
     }
 
+    val onChart = {
+        inputNumbers
+            .ifEmpty { parseNumbers(textState, numberSeparator) }
+            .run(onChartButtonClicked)
+    }
+
     Box(
         modifier = Modifier
             .wrapContentHeight(align = Alignment.Top)
             .wrapContentWidth(align = Alignment.CenterHorizontally)
+
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -90,12 +100,12 @@ fun ArraySorterForm() {
                     }
                 }
             }
-            Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+            Row {
                 Button(
                     onClick = onSort,
                     modifier = Modifier
                         .padding(16.dp)
-                        .width(65.dp)
+                        .width(85.dp)
                         .wrapContentWidth(align = Alignment.CenterHorizontally)
                 ) {
                     Text(text = "Sort")
@@ -108,6 +118,15 @@ fun ArraySorterForm() {
                         .wrapContentWidth(align = Alignment.CenterHorizontally)
                 ) {
                     Text(text = "Clear")
+                }
+                Button(
+                    onClick = onChart,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .width(85.dp)
+                        .wrapContentWidth(align = Alignment.CenterHorizontally)
+                ) {
+                    Text(text = "Chart")
                 }
             }
             OutlinedTextField(
@@ -137,11 +156,10 @@ fun ArraySorterForm() {
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun ArraySorterFormPreview() {
     AndroidArraySorterTheme {
-        ArraySorterForm()
+        ArraySorterNavigation()
     }
 }

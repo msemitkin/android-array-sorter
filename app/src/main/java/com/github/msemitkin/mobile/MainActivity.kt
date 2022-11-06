@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(color = MaterialTheme.colors.background)
                 ) {
-                    ArraySorterForm()
+                    ArraySorterNavigation()
                 }
             }
         }

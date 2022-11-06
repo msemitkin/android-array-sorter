@@ -1,6 +1,6 @@
 package com.github.msemitkin.mobile.sorting
 
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 internal class MergeSortTest {
@@ -9,7 +9,7 @@ internal class MergeSortTest {
     fun sort_successFlow() {
         val numbers = listOf(1, 3, 2, 5, 4)
 
-        val sortedNumbers = MergeSort().sort(numbers)
+        val sortedNumbers = MergeSort().sort(numbers).sortedValues
 
         assertEquals(listOf(1, 2, 3, 4, 5), sortedNumbers)
     }
@@ -18,7 +18,7 @@ internal class MergeSortTest {
     fun sort_shouldReturnEmptyList_whenGivenEmptyList() {
         val numbers = emptyList<Int>()
 
-        val sortedNumbers = MergeSort().sort(numbers)
+        val sortedNumbers = MergeSort().sort(numbers).sortedValues
 
         assertEquals(emptyList<Number>(), sortedNumbers)
     }
@@ -27,7 +27,7 @@ internal class MergeSortTest {
     fun sort_shouldSortNumbers_whenGivenIsReverseOrder() {
         val numbers = listOf(5, 4, 3, 2, 1)
 
-        val sortedNumbers = MergeSort().sort(numbers)
+        val sortedNumbers = MergeSort().sort(numbers).sortedValues
 
         assertEquals(listOf(1, 2, 3, 4, 5), sortedNumbers)
     }
