@@ -1,23 +1,25 @@
 package com.github.msemitkin.mobile.sorting
 
 class SelectionSort : SortingStrategy {
-    override fun sort(numbers: Collection<Number>): List<Number> {
-        return selectionSort(numbers.toList())
+    override fun <T : Comparable<T>> sort(items: Collection<T>): SortingResult<T> {
+        return selectionSort(items.toList())
     }
 
-    private fun selectionSort(numbers: List<Number>): List<Number> {
-        val numbersToSort = ArrayList(numbers)
-        for (i in 0 until numbersToSort.size) {
+    private fun <T : Comparable<T>> selectionSort(numbers: List<T>): SortingResult<T> {
+        var iterationsCount = 0
+        val itemsToSort = ArrayList(numbers)
+        for (i in 0 until itemsToSort.size) {
             var min = i
-            for (j in i + 1 until numbersToSort.size) {
-                if (numbersToSort[j].toDouble() < numbersToSort[min].toDouble()) {
+            for (j in i + 1 until itemsToSort.size) {
+                if (itemsToSort[j] < itemsToSort[min]) {
                     min = j
                 }
+                iterationsCount++
             }
-            val temp = numbersToSort[min]
-            numbersToSort[min] = numbersToSort[i]
-            numbersToSort[i] = temp
+            val temp = itemsToSort[min]
+            itemsToSort[min] = itemsToSort[i]
+            itemsToSort[i] = temp
         }
-        return numbersToSort
+        return SortingResult(itemsToSort, iterationsCount)
     }
 }

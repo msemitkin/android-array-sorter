@@ -16,7 +16,7 @@ internal class MergeSortTest {
 
     @Test
     fun sort_shouldReturnEmptyList_whenGivenEmptyList() {
-        val numbers = emptyList<Number>()
+        val numbers = emptyList<Int>()
 
         val sortedNumbers = MergeSort().sort(numbers)
 

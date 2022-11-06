@@ -24,7 +24,7 @@ fun ArraySorterForm() {
     var textState by remember { mutableStateOf("") }
     var sortedTextState by remember { mutableStateOf("") }
     var chosenSortingStrategyName by remember { mutableStateOf(defaultSortingStrategy) }
-    val strategies = mapOf(
+    val strategies: Map<String, SortingStrategy> = mapOf(
         "Merge Sort" to MergeSort(),
         "Bubble Sort" to BubbleSort(),
         "Insertion Sort" to InsertionSort(),
@@ -72,7 +72,7 @@ fun ArraySorterForm() {
             Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                 Button(
                     onClick = {
-                        val numbers: List<Number>
+                        val numbers: List<Int>
                         try {
                             numbers = parseNumbers(textState, numberSeparator)
                             isError = false
@@ -80,9 +80,9 @@ fun ArraySorterForm() {
                             isError = true
                             return@Button
                         }
-                        val sortedNumbers =
+                        val sortedNumbers: SortingResult<Int> =
                             strategies[chosenSortingStrategyName]!!.sort(numbers)
-                        sortedTextState = sortedNumbers.joinToString(numberSeparator)
+                        sortedTextState = sortedNumbers.sortedValues.joinToString(numberSeparator)
                     },
                     modifier = Modifier
                         .padding(16.dp)

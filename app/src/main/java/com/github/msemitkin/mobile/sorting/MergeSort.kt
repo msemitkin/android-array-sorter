@@ -1,28 +1,41 @@
 package com.github.msemitkin.mobile.sorting
 
-class MergeSort : SortingStrategy {
-    override fun sort(numbers: Collection<Number>): List<Number> =
-        mergeSort(numbers.toList())
+import java.util.concurrent.atomic.AtomicInteger
 
-    private fun mergeSort(numbers: List<Number>): List<Number> {
+class MergeSort : SortingStrategy {
+    override fun <T : Comparable<T>> sort(items: Collection<T>): SortingResult<T> {
+        val iterationsCounter = AtomicInteger(0)
+        return SortingResult(
+            mergeSort(items.toList(), iterationsCounter),
+            iterationsCounter.toInt()
+        )
+    }
+
+
+    private fun <T : Comparable<T>> mergeSort(
+        numbers: List<T>,
+        iterationsCount: AtomicInteger
+    ): List<T> {
         if (numbers.size <= 1) {
             return numbers
         }
+
+        iterationsCount.incrementAndGet()
 
         val middle = numbers.size / 2
         val left = numbers.subList(0, middle);
         val right = numbers.subList(middle, numbers.size);
 
-        return merge(mergeSort(left), mergeSort(right))
+        return merge(mergeSort(left, iterationsCount), mergeSort(right, iterationsCount))
     }
 
-    private fun merge(left: List<Number>, right: List<Number>): List<Number> {
+    private fun <T : Comparable<T>> merge(left: List<T>, right: List<T>): List<T> {
         var indexLeft = 0
         var indexRight = 0
-        val newList: MutableList<Number> = mutableListOf()
+        val newList: MutableList<T> = mutableListOf()
 
         while (indexLeft < left.count() && indexRight < right.count()) {
-            if (left[indexLeft].toDouble() <= right[indexRight].toDouble()) {
+            if (left[indexLeft] <= right[indexRight]) {
                 newList.add(left[indexLeft])
                 indexLeft++
             } else {

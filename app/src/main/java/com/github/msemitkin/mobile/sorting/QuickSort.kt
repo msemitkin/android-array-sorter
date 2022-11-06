@@ -1,19 +1,25 @@
 package com.github.msemitkin.mobile.sorting
 
+import java.util.concurrent.atomic.AtomicInteger
+
 class QuickSort : SortingStrategy {
-    override fun sort(numbers: Collection<Number>): List<Number> {
-        return quicksort(numbers.toList())
+    override fun <T : Comparable<T>> sort(items: Collection<T>): SortingResult<T> {
+        val counter = AtomicInteger(0)
+        return SortingResult(quicksort(items.toList(), counter), counter.toInt())
     }
 
-    private fun quicksort(numbers: List<Number>): List<Number> {
-        if (numbers.size <= 1) {
-            return numbers
+    private fun <T : Comparable<T>> quicksort(
+        items: List<T>,
+        iterationsCount: AtomicInteger
+    ): List<T> {
+        iterationsCount.incrementAndGet()
+        if (items.size <= 1) {
+            return items
         }
-        val pivot = numbers[numbers.size / 2]
-        val left = numbers.filter { it.toDouble() < pivot.toDouble() }
-        val middle = numbers.filter { it.toDouble() == pivot.toDouble() }
-        val right = numbers.filter { it.toDouble() > pivot.toDouble() }
-        return quicksort(left) + middle + quicksort(right)
+        val pivot = items[items.size / 2]
+        val left = items.filter { it < pivot }
+        val middle = items.filter { it == pivot }
+        val right = items.filter { it > pivot }
+        return quicksort(left, iterationsCount) + middle + quicksort(right, iterationsCount)
     }
-
 }
