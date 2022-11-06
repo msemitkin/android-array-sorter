@@ -2,10 +2,15 @@ package com.github.msemitkin.mobile
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.msemitkin.mobile.sorting.SortingStrategy
@@ -21,6 +26,7 @@ fun ArraySorterForm(
     strategies: Map<String, SortingStrategy>,
     uiState: NumbersUiState
 ) {
+    val focusManager = LocalFocusManager.current
     Box(
         modifier = Modifier
             .wrapContentHeight(align = Alignment.Top)
@@ -35,6 +41,11 @@ fun ArraySorterForm(
         ) {
             OutlinedTextField(
                 value = uiState.inputString,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                 onValueChange = { onInputUpdate(it) },
                 shape = RoundedCornerShape(15),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
