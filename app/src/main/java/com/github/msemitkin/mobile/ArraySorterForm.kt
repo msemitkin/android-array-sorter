@@ -2,23 +2,20 @@ package com.github.msemitkin.mobile
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.msemitkin.mobile.sorting.SortingStrategy
-import com.github.msemitkin.mobile.ui.theme.AndroidArraySorterTheme
 
 @Composable
 fun ArraySorterForm(
     onSort: () -> Unit,
     onClear: () -> Unit,
     onChart: () -> Unit,
+    onSave: () -> Unit,
     onInputUpdate: (String) -> Unit,
     onStrategyChange: (String) -> Unit,
     strategies: Map<String, SortingStrategy>,
@@ -38,7 +35,6 @@ fun ArraySorterForm(
         ) {
             OutlinedTextField(
                 value = uiState.inputString,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 onValueChange = { onInputUpdate(it) },
                 shape = RoundedCornerShape(15),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -65,7 +61,10 @@ fun ArraySorterForm(
             Row {
                 MenuButton(onClick = onSort, text = "Sort")
                 MenuButton(onClick = onClear, text = "Clear")
+            }
+            Row {
                 MenuButton(onClick = onChart, text = "Chart")
+                MenuButton(onClick = onSave, text = "Save")
             }
             ReadOnlyField(
                 value = uiState.sortedNumbersState
@@ -104,12 +103,4 @@ private fun ReadOnlyField(value: String, label: String? = null) {
         ),
         label = { Text(text = label ?: "") }
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ArraySorterFormPreview() {
-    AndroidArraySorterTheme {
-        ArraySorterNavigation()
-    }
 }

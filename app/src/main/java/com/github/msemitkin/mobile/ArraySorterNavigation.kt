@@ -1,5 +1,7 @@
 package com.github.msemitkin.mobile
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -9,11 +11,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.msemitkin.mobile.sorting.*
+import java.util.*
 
 @Composable
 fun ArraySorterNavigation(
     navController: NavHostController = rememberNavController(),
     viewModel: NumbersViewModel = NumbersViewModel(),
+    context: Context
 ) {
     val numberSeparator = stringResource(R.string.number_separator)
     val uiState: NumbersUiState by viewModel.uiState.collectAsState()
@@ -54,6 +58,10 @@ fun ArraySorterNavigation(
                         viewModel.setInvalidInput(true)
                     }
                 },
+                onSave = {
+                    val fileName = saveContent(uiState.inputString.toByteArray(), context)
+                    Toast.makeText(context, "Saved to $fileName", Toast.LENGTH_SHORT).show()
+                },
                 onInputUpdate = { viewModel.setInputString(it) },
                 onClear = { viewModel.reset() },
                 onStrategyChange = { strategy -> viewModel.setChosenStrategyName(strategy) },
@@ -66,3 +74,23 @@ fun ArraySorterNavigation(
         }
     }
 }
+
+private fun saveContent(content: ByteArray, context: Context): String {
+    val currentTime: Date = Calendar.getInstance().time
+    val fileName = cleanUpString(currentTime.toString())
+    context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
+        it.write(content)
+    }
+    return fileName
+}
+
+private fun cleanUpString(string: String): String {
+    return String(
+        string.toCharArray()
+            .map {
+                if (it in 'a'..'b' || it in 'A'..'B' || it in '0'..'9') it
+                else '_'
+            }.toCharArray()
+    ).trim('_')
+}
+
