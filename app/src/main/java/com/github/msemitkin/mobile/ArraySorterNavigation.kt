@@ -31,23 +31,7 @@ fun ArraySorterNavigation(
         "Selection Sort" to SelectionSort()
     )
     Scaffold(topBar = {
-        var expanded by remember { mutableStateOf(false) }
-        TopAppBar(
-            title = { Text(stringResource(R.string.app_name)) },
-            actions = {
-                IconButton(onClick = { expanded = true }) {
-                    Icon(
-                        imageVector = Icons.Filled.MoreVert,
-                        contentDescription = "More"
-                    )
-                }
-                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                    DropdownMenuItem(onClick = { navController.navigate("author") }) {
-                        Text(text = "Author")
-                    }
-                }
-            }
-        )
+        ApplicationHeader(onAuthorClick = { navController.navigate("author") })
     }) {
         NavHost(navController = navController, startDestination = "home") {
             composable("home") {
@@ -97,6 +81,27 @@ fun ArraySorterNavigation(
             }
         }
     }
+}
+
+@Composable
+fun ApplicationHeader(onAuthorClick: () -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    TopAppBar(
+        title = { Text(stringResource(R.string.app_name)) },
+        actions = {
+            IconButton(onClick = { expanded = true }) {
+                Icon(
+                    imageVector = Icons.Filled.MoreVert,
+                    contentDescription = "More"
+                )
+            }
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                DropdownMenuItem(onClick = onAuthorClick) {
+                    Text(text = "Author")
+                }
+            }
+        }
+    )
 }
 
 private fun saveContent(content: ByteArray, context: Context): String {
