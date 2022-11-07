@@ -115,6 +115,6 @@ private fun cleanUpString(string: String): String {
                 if (it in 'a'..'b' || it in 'A'..'B' || it in '0'..'9') it
                 else '_'
             }.toCharArray()
-    ).trim('_')
+    ).replace("_", "")
 }
 
