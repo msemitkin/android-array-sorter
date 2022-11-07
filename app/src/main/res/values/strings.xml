@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">android-array-sorter</string>
+    <string name="app_name">Array Sorter</string>
     <string name="default_sorting_strategy">Merge Sort</string>
     <string name="number_separator">\u0020</string>
+    <string name="author_name">Mykhailo Semitkin</string>
+    <string name="author_university">Taras Shevchenko National University of Kyiv</string>
 </resources>

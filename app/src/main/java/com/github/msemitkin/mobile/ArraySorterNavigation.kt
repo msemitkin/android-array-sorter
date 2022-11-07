@@ -2,9 +2,10 @@ package com.github.msemitkin.mobile
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -29,48 +30,71 @@ fun ArraySorterNavigation(
         "Quick Sort" to QuickSort(),
         "Selection Sort" to SelectionSort()
     )
+    Scaffold(topBar = {
+        var expanded by remember { mutableStateOf(false) }
+        TopAppBar(
+            title = { Text(stringResource(R.string.app_name)) },
+            actions = {
+                IconButton(onClick = { expanded = true }) {
+                    Icon(
+                        imageVector = Icons.Filled.MoreVert,
+                        contentDescription = "More"
+                    )
+                }
+                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                    DropdownMenuItem(onClick = { navController.navigate("author") }) {
+                        Text(text = "Author")
+                    }
+                }
+            }
+        )
+    }) {
+        NavHost(navController = navController, startDestination = "home") {
+            composable("home") {
+                ArraySorterForm(
+                    onSort = {
+                        try {
+                            val parsedNumbers = parseNumbers(uiState.inputString, numberSeparator)
+                            val sortingResult =
+                                strategies[uiState.chosenStrategyName]!!.sort(parsedNumbers)
+                            viewModel.setNumbers(parsedNumbers)
+                            viewModel.setInvalidInput(false)
+                            viewModel.setSortingResult(
+                                sortingResult.sortedValues.joinToString(numberSeparator),
+                                sortingResult.numberOfIterations.toString()
+                            )
+                        } catch (e: Exception) {
+                            viewModel.setInvalidInput(true)
+                        }
+                    },
+                    onChart = {
+                        try {
+                            val numbers = parseNumbers(uiState.inputString, numberSeparator)
+                            viewModel.setNumbers(numbers)
+                            viewModel.setInvalidInput(false)
+                            navController.navigate("chart")
+                        } catch (e: Exception) {
+                            viewModel.setInvalidInput(true)
+                        }
+                    },
+                    onSave = {
+                        val fileName = saveContent(uiState.inputString.toByteArray(), context)
+                        Toast.makeText(context, "Saved to $fileName", Toast.LENGTH_SHORT).show()
+                    },
+                    onInputUpdate = { viewModel.setInputString(it) },
+                    onClear = { viewModel.reset() },
+                    onStrategyChange = { strategy -> viewModel.setChosenStrategyName(strategy) },
+                    strategies = strategies,
+                    uiState = uiState
+                )
+            }
 
-    NavHost(navController = navController, startDestination = "home") {
-        composable("home") {
-            ArraySorterForm(
-                onSort = {
-                    try {
-                        val parsedNumbers = parseNumbers(uiState.inputString, numberSeparator)
-                        val sortingResult =
-                            strategies[uiState.chosenStrategyName]!!.sort(parsedNumbers)
-                        viewModel.setNumbers(parsedNumbers)
-                        viewModel.setInvalidInput(false)
-                        viewModel.setSortingResult(
-                            sortingResult.sortedValues.joinToString(numberSeparator),
-                            sortingResult.numberOfIterations.toString()
-                        )
-                    } catch (e: Exception) {
-                        viewModel.setInvalidInput(true)
-                    }
-                },
-                onChart = {
-                    try {
-                        val numbers = parseNumbers(uiState.inputString, numberSeparator)
-                        viewModel.setNumbers(numbers)
-                        viewModel.setInvalidInput(false)
-                        navController.navigate("chart")
-                    } catch (e: Exception) {
-                        viewModel.setInvalidInput(true)
-                    }
-                },
-                onSave = {
-                    val fileName = saveContent(uiState.inputString.toByteArray(), context)
-                    Toast.makeText(context, "Saved to $fileName", Toast.LENGTH_SHORT).show()
-                },
-                onInputUpdate = { viewModel.setInputString(it) },
-                onClear = { viewModel.reset() },
-                onStrategyChange = { strategy -> viewModel.setChosenStrategyName(strategy) },
-                strategies = strategies,
-                uiState = uiState
-            )
-        }
-        composable("chart") {
-            ChartComposable(uiState)
+            composable("chart") {
+                ChartComposable(uiState)
+            }
+            composable("author") {
+                Author()
+            }
         }
     }
 }
